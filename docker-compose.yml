@@ -1,0 +1,74 @@
+version: '3.9'
+
+services:
+  # ─────────────────────────────────────────
+  # PostgreSQL database
+  # ─────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: projectmt
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d projectmt"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  # FastAPI backend
+  # ─────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/projectmt
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production-please-use-32-bytes}
+      DEBUG: ${DEBUG:-false}
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      REFRESH_TOKEN_EXPIRE_DAYS: 30
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE_MB: 50
+      ALLOWED_ORIGINS: '["*"]'
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # Nginx reverse proxy (optional, for prod)
+  # ─────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - uploads_data:/var/www/uploads:ro
+    depends_on:
+      - api
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  uploads_data:

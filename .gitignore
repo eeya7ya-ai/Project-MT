@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+backend/uploads/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.iml
+.idea/
+*.class
+*.log
+*.lock
+*.g.dart
+*.freezed.dart
+.fvm/
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/google-services.json
+android/app/src/main/GeneratedPluginRegistrant.java
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+**/android/key.properties
+
+# Build outputs
+build/
+*.apk
+*.aab
+*.ipa
+*.app
+
+# macOS
+macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Docker
+postgres_data/
+uploads_data/
+
+# Editor
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
