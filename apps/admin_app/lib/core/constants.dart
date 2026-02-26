@@ -1,6 +1,6 @@
 class AppConstants {
   static const String appName = 'Project-MT Admin';
-  static const String baseUrl = 'http://localhost:8000/api/v1';
+  static const String baseUrl = 'http://21.0.0.2:8000/api/v1';
 
   // Storage keys
   static const String accessTokenKey = 'access_token';

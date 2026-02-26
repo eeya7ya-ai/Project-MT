@@ -1,6 +1,6 @@
 class AppConstants {
   static const String appName = 'Project-MT Tech';
-  static const String baseUrl = 'http://10.0.2.2:8000/api/v1'; // Android emulator localhost
+  static const String baseUrl = 'http://21.0.0.2:8000/api/v1'; // Local dev server IP
 
   // Storage keys
   static const String accessTokenKey = 'access_token';
