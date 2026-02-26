@@ -2,23 +2,15 @@
   "name": "Project-MT Dev",
   "build": {
     "context": "..",
-    "dockerfile": "Dockerfile"
+    "dockerfile": ".devcontainer/Dockerfile"
   },
-  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.dev.yml"],
-  "service": "devcontainer",
   "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
 
-  "forwardPorts": [
-    8000,   // FastAPI backend
-    5432,   // PostgreSQL
-    8080,   // Nginx
-    4000,   // Flutter web - admin_app
-    4001    // Flutter web - technician_app
-  ],
+  "forwardPorts": [8000, 5432, 4000, 4001],
   "portsAttributes": {
     "8000": { "label": "FastAPI Backend" },
     "5432": { "label": "PostgreSQL" },
-    "8080": { "label": "Nginx" },
     "4000": { "label": "Admin App (web)" },
     "4001": { "label": "Technician App (web)" }
   },
@@ -30,34 +22,16 @@
         "Dart-Code.flutter",
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "42Crunch.vscode-openapi",
         "humao.rest-client",
-        "mtxr.sqltools",
-        "mtxr.sqltools-driver-pg",
         "ms-azuretools.vscode-docker",
-        "EditorConfig.EditorConfig",
         "eamodio.gitlens"
       ],
       "settings": {
         "editor.formatOnSave": true,
         "dart.flutterSdkPath": "/opt/flutter",
         "python.defaultInterpreterPath": "/usr/bin/python3",
-        "[dart]": {
-          "editor.defaultFormatter": "Dart-Code.dart-code"
-        },
-        "[python]": {
-          "editor.defaultFormatter": "ms-python.python"
-        },
-        "sqltools.connections": [
-          {
-            "name": "Project-MT DB",
-            "driver": "PostgreSQL",
-            "server": "db",
-            "port": 5432,
-            "database": "project_mt",
-            "username": "postgres"
-          }
-        ]
+        "[dart]": { "editor.defaultFormatter": "Dart-Code.dart-code" },
+        "[python]": { "editor.defaultFormatter": "ms-python.python" }
       }
     }
   },
