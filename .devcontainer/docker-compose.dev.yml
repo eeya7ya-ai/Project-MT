@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+      - flutter-pub-cache:/home/vscode/.pub-cache
+      - python-cache:/home/vscode/.cache/pip
+    command: sleep infinity
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/project_mt
+    depends_on:
+      - db
+
+  # Override db to expose port to host
+  db:
+    ports:
+      - "5432:5432"
+
+volumes:
+  flutter-pub-cache:
+  python-cache:
