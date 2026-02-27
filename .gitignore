@@ -58,6 +58,10 @@ macos/Flutter/GeneratedPluginRegistrant.swift
 postgres_data/
 uploads_data/
 
+# Node
+node_modules/
+.npm/
+
 # Editor
 .vscode/
 *.swp
