@@ -25,11 +25,43 @@ api.interceptors.response.use(
         return api(original)
       } catch {
         localStorage.clear()
-        window.location.href = '/login'
+        const isAdminPath = window.location.pathname.startsWith('/admin')
+        window.location.href = isAdminPath ? '/admin/login' : '/login'
       }
     }
     return Promise.reject(err)
   }
 )
+
+// ── Offline queue ─────────────────────────────────────────
+const QUEUE_KEY = 'offline_queue'
+
+export function queueOperation(op) {
+  const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]')
+  queue.push({ ...op, timestamp: Date.now() })
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(queue))
+}
+
+export function getQueue() {
+  return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]')
+}
+
+export async function flushQueue() {
+  const queue = getQueue()
+  if (!queue.length) return { synced: 0, failed: 0 }
+  let synced = 0, failed = 0
+  const remaining = []
+  for (const op of queue) {
+    try {
+      await api({ method: op.method, url: op.url, data: op.data })
+      synced++
+    } catch {
+      remaining.push(op)
+      failed++
+    }
+  }
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(remaining))
+  return { synced, failed }
+}
 
 export default api

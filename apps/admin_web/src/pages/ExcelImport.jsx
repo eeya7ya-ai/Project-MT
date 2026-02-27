@@ -57,7 +57,7 @@ export default function ExcelImport() {
 
   return (
     <div className="page">
-      <Link to={`/projects/${id}/modules/${type}`} className="back-link">← Back to Module</Link>
+      <Link to={`/admin/projects/${id}/modules/${type}`} className="back-link">← Back to Module</Link>
       <h1 className="page-title">📊 Import from Excel — {MODULE_TYPES[type]}</h1>
 
       {error && <div className="alert alert-error">{error}</div>}
@@ -140,7 +140,7 @@ export default function ExcelImport() {
           <h2 className="section-title">Import Complete!</h2>
           <p className="text-gray">{result.created ?? result.count ?? 0} items imported successfully.</p>
           <div className="mt-4">
-            <Link to={`/projects/${id}/modules/${type}`} className="btn btn-primary">View Module</Link>
+            <Link to={`/admin/projects/${id}/modules/${type}`} className="btn btn-primary">View Module</Link>
           </div>
         </div>
       )}

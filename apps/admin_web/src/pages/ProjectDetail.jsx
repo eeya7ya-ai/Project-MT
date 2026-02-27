@@ -40,7 +40,7 @@ export default function ProjectDetail() {
     setDeleting(true)
     try {
       await api.delete(`/projects/${id}`)
-      navigate('/projects')
+      navigate('/admin/projects')
     } catch {
       setError('Failed to delete project')
       setDeleting(false)
@@ -52,14 +52,14 @@ export default function ProjectDetail() {
 
   return (
     <div className="page">
-      <Link to="/projects" className="back-link">← Back to Projects</Link>
+      <Link to="/admin/projects" className="back-link">← Back to Projects</Link>
       <div className="page-header">
         <div>
           <h1 className="page-title" style={{ marginBottom: 4 }}>{project.name}</h1>
           <StatusBadge status={project.status} />
         </div>
         <div className="flex gap-2">
-          <Link to={`/projects/${id}/edit`} className="btn btn-secondary">Edit</Link>
+          <Link to={`/admin/projects/${id}/edit`} className="btn btn-secondary">Edit</Link>
           <button className="btn btn-danger" onClick={handleDelete} disabled={deleting}>
             {deleting ? 'Deleting…' : 'Delete'}
           </button>

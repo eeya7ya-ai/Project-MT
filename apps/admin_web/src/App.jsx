@@ -1,27 +1,57 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
+
+// ── Admin pages ──────────────────────────────────────────
+import AdminLogin from './pages/Login'
 import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
 import CreateProject from './pages/CreateProject'
 import ModuleDetail from './pages/ModuleDetail'
 import ExcelImport from './pages/ExcelImport'
 import Users from './pages/Users'
-import PrivateRoute from './components/PrivateRoute'
+
+// ── Client (technician) pages ────────────────────────────
+import ClientLogin from './pages/client/Login'
+import ClientProjects from './pages/client/Projects'
+import ClientProjectDetail from './pages/client/ProjectDetail'
+import ClientModuleChecklist from './pages/client/ModuleChecklist'
+import ClientSchedule from './pages/client/Schedule'
+import ClientProfile from './pages/client/Profile'
+
+// ── Route guards ─────────────────────────────────────────
+import AdminPrivateRoute from './components/PrivateRoute'
+import ClientShell from './components/ClientShell'
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route element={<PrivateRoute />}>
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/projects/create" element={<CreateProject />} />
-        <Route path="/projects/:id" element={<ProjectDetail />} />
-        <Route path="/projects/:id/edit" element={<CreateProject />} />
-        <Route path="/projects/:id/modules/:type" element={<ModuleDetail />} />
-        <Route path="/projects/:id/modules/:type/import" element={<ExcelImport />} />
-        <Route path="/users" element={<Users />} />
+
+      {/* ══ CLIENT / TECHNICIAN ROUTES  →  / ══ */}
+      <Route path="/login" element={<ClientLogin />} />
+      <Route element={<ClientShell />}>
+        <Route path="/projects" element={<ClientProjects />} />
+        <Route path="/projects/:id" element={<ClientProjectDetail />} />
+        <Route path="/projects/:id/modules/:type" element={<ClientModuleChecklist />} />
+        <Route path="/schedule" element={<ClientSchedule />} />
+        <Route path="/profile" element={<ClientProfile />} />
       </Route>
-      <Route path="*" element={<Navigate to="/projects" replace />} />
+
+      {/* ══ ADMIN ROUTES  →  /admin/* ══ */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<Navigate to="/admin/projects" replace />} />
+      <Route element={<AdminPrivateRoute />}>
+        <Route path="/admin/projects" element={<Projects />} />
+        <Route path="/admin/projects/create" element={<CreateProject />} />
+        <Route path="/admin/projects/:id" element={<ProjectDetail />} />
+        <Route path="/admin/projects/:id/edit" element={<CreateProject />} />
+        <Route path="/admin/projects/:id/modules/:type" element={<ModuleDetail />} />
+        <Route path="/admin/projects/:id/modules/:type/import" element={<ExcelImport />} />
+        <Route path="/admin/users" element={<Users />} />
+      </Route>
+
+      {/* ══ FALLBACK ══ */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+
     </Routes>
   )
 }
