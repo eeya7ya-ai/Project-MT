@@ -1,50 +1,59 @@
 import { useState, useEffect } from 'react'
-import api from '../core/api'
-import StatusBadge from '../components/StatusBadge'
 
-const ROLES = ['admin', 'dispatcher', 'technician']
+const ROLES = ['technician', 'dispatcher', 'admin']
+const STORAGE_KEY = 'local_users'
+
+function loadUsers() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+}
+function saveUsers(users) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(users))
+}
 
 export default function Users() {
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [users, setUsers]       = useState([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ email: '', full_name: '', password: '', role: 'technician' })
-  const [saving, setSaving] = useState(false)
+  const [form, setForm]         = useState({ email: '', full_name: '', password: '', role: 'technician' })
+  const [error, setError]       = useState('')
 
   const role = localStorage.getItem('user_role')
 
   useEffect(() => {
-    api.get('/auth/users')
-      .then(r => setUsers(r.data))
-      .catch(() => setError('Failed to load users'))
-      .finally(() => setLoading(false))
+    setUsers(loadUsers())
   }, [])
 
-  async function createUser(e) {
+  function createUser(e) {
     e.preventDefault()
-    setSaving(true)
     setError('')
-    try {
-      const { data } = await api.post('/auth/users', form)
-      setUsers(u => [...u, data])
-      setShowForm(false)
-      setForm({ email: '', full_name: '', password: '', role: 'technician' })
-    } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to create user')
-    } finally {
-      setSaving(false)
+    const existing = users.find(u => u.email === form.email)
+    if (existing) { setError('Email already exists.'); return }
+
+    const newUser = {
+      id:        Date.now().toString(),
+      email:     form.email,
+      full_name: form.full_name,
+      password:  form.password,
+      role:      form.role,
+      is_active: true,
     }
+    const updated = [...users, newUser]
+    saveUsers(updated)
+    setUsers(updated)
+    setShowForm(false)
+    setForm({ email: '', full_name: '', password: '', role: 'technician' })
   }
 
-  async function deleteUser(userId) {
+  function deleteUser(id) {
     if (!confirm('Delete this user?')) return
-    try {
-      await api.delete(`/auth/users/${userId}`)
-      setUsers(u => u.filter(x => x.id !== userId))
-    } catch {
-      setError('Failed to delete user')
-    }
+    const updated = users.filter(u => u.id !== id)
+    saveUsers(updated)
+    setUsers(updated)
+  }
+
+  function toggleActive(id) {
+    const updated = users.map(u => u.id === id ? { ...u, is_active: !u.is_active } : u)
+    saveUsers(updated)
+    setUsers(updated)
   }
 
   if (role !== 'admin') return (
@@ -90,47 +99,45 @@ export default function Users() {
                 </select>
               </div>
             </div>
-            <button className="btn btn-primary" disabled={saving}>
-              {saving ? 'Creating…' : 'Create User'}
-            </button>
+            <button className="btn btn-primary" type="submit">Create User</button>
           </form>
         </div>
       )}
 
-      {loading ? (
-        <div className="loading"><div className="spinner" /></div>
-      ) : (
-        <div className="card" style={{ padding: 0 }}>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Active</th>
-                  <th></th>
+      <div className="card" style={{ padding: 0 }}>
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Active</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.length === 0 ? (
+                <tr><td colSpan={5} style={{ textAlign: 'center', color: '#888', padding: '24px' }}>No users yet. Click "+ New User" to add one.</td></tr>
+              ) : users.map(u => (
+                <tr key={u.id}>
+                  <td>{u.full_name || '—'}</td>
+                  <td>{u.email}</td>
+                  <td><span className="badge badge-in_progress">{u.role}</span></td>
+                  <td>
+                    <button onClick={() => toggleActive(u.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '18px' }}>
+                      {u.is_active ? '✅' : '❌'}
+                    </button>
+                  </td>
+                  <td>
+                    <button className="btn btn-danger btn-sm" onClick={() => deleteUser(u.id)}>Delete</button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {users.map(u => (
-                  <tr key={u.id}>
-                    <td>{u.full_name || '—'}</td>
-                    <td>{u.email}</td>
-                    <td><span className="badge badge-in_progress">{u.role}</span></td>
-                    <td>{u.is_active ? '✅' : '❌'}</td>
-                    <td>
-                      <button className="btn btn-danger btn-sm" onClick={() => deleteUser(u.id)}>
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
+      </div>
     </div>
   )
 }
