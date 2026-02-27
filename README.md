@@ -1,7 +1,7 @@
 # Project-MT
 
-Full-stack field project management system with Admin app (Flutter desktop+mobile),
-Technician mobile app (Flutter + offline SQLite), and FastAPI backend on PostgreSQL.
+Full-stack field project management system with Admin web app (React + Vite),
+Technician PWA (React + Vite + offline support), and FastAPI backend on PostgreSQL.
 
 ---
 
@@ -30,8 +30,8 @@ Project-MT/
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── apps/
-│   ├── admin_app/              # Flutter Admin + Dispatcher (desktop + mobile)
-│   └── technician_app/         # Flutter Technician (mobile + offline SQLite)
+│   ├── admin_web/              # React + Vite Admin + Dispatcher (web, port 3000)
+│   └── technician_web/         # React + Vite PWA Technician (mobile-first, port 3001)
 ├── nginx/nginx.conf
 └── docker-compose.yml
 ```
@@ -112,16 +112,26 @@ open http://localhost:8000/docs
 
 Default admin: admin@projectmt.com / Admin@1234
 
-### Flutter Apps
+### Web Apps (Development)
 ```bash
-# Admin app (desktop/mobile)
-cd apps/admin_app && flutter pub get && flutter run
+# Admin web app  →  http://localhost:3000
+cd apps/admin_web && npm install && npm run dev
 
-# Technician app (mobile)
-cd apps/technician_app && flutter pub get && flutter run
+# Technician web app (PWA)  →  http://localhost:3001
+cd apps/technician_web && npm install && npm run dev
 ```
 
-Update baseUrl in lib/core/constants.dart to your server IP.
+### Web Apps (Docker)
+```bash
+# Start everything including web apps
+docker-compose up -d
+
+# Admin:      http://localhost:3000
+# Technician: http://localhost:3001
+# API:        http://localhost:8000
+```
+
+Set `VITE_API_URL` in each app's `.env` to point to your backend.
 
 ---
 

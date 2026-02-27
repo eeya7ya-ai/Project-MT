@@ -53,6 +53,32 @@ services:
       retries: 3
 
   # ─────────────────────────────────────────
+  # Admin Web App (React + Vite)
+  # ─────────────────────────────────────────
+  admin_web:
+    build:
+      context: ./apps/admin_web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+  # ─────────────────────────────────────────
+  # Technician Web App (React + Vite PWA)
+  # ─────────────────────────────────────────
+  technician_web:
+    build:
+      context: ./apps/technician_web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3001:80"
+    depends_on:
+      - api
+
+  # ─────────────────────────────────────────
   # Nginx reverse proxy (optional, for prod)
   # ─────────────────────────────────────────
   nginx:
@@ -66,6 +92,8 @@ services:
       - uploads_data:/var/www/uploads:ro
     depends_on:
       - api
+      - admin_web
+      - technician_web
     profiles:
       - production
 
