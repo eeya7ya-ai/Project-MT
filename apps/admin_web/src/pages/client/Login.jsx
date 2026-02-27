@@ -3,22 +3,19 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { BASE_URL } from '../../core/constants'
 
-const DEFAULT_EMAIL    = 'admin@projectmt.com'
-const DEFAULT_PASSWORD = 'Admin@1234'
-
 export default function ClientLogin() {
   const navigate = useNavigate()
-  const [error, setError]     = useState('')
-  const [loading, setLoading] = useState(false)
+  const [email, setEmail]       = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError]       = useState('')
+  const [loading, setLoading]   = useState(false)
 
-  async function handleEnter() {
+  async function handleSubmit(e) {
+    e.preventDefault()
     setError('')
     setLoading(true)
     try {
-      const { data } = await axios.post(`${BASE_URL}/auth/login`, {
-        email: DEFAULT_EMAIL,
-        password: DEFAULT_PASSWORD,
-      })
+      const { data } = await axios.post(`${BASE_URL}/auth/login`, { email, password })
       localStorage.setItem('access_token',  data.access_token)
       localStorage.setItem('refresh_token', data.refresh_token)
 
@@ -29,7 +26,7 @@ export default function ClientLogin() {
       localStorage.setItem('user_name', me.full_name || me.email)
       localStorage.setItem('user_id',   me.id)
 
-      // Cache projects for offline
+      // Cache projects for offline use
       try {
         const { data: projects } = await axios.get(`${BASE_URL}/technician/my-projects`, {
           headers: { Authorization: `Bearer ${data.access_token}` },
@@ -39,7 +36,7 @@ export default function ClientLogin() {
 
       navigate('/projects')
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.')
+      setError(err.response?.data?.detail || 'Invalid email or password.')
     } finally {
       setLoading(false)
     }
@@ -97,39 +94,40 @@ export default function ClientLogin() {
           position: relative;
           width: 420px;
           max-width: calc(100vw - 32px);
-          padding: 56px 48px;
+          padding: 48px 44px;
           border-radius: 28px;
           background: rgba(255,255,255,0.025);
           backdrop-filter: blur(24px);
           border: 1px solid rgba(255,255,255,0.07);
           box-shadow: 0 40px 100px rgba(0,0,0,0.75);
-          text-align: center;
           z-index: 10;
         }
 
         .cl-icon {
-          width: 72px; height: 72px;
+          width: 64px; height: 64px;
           background: linear-gradient(135deg, #0d9488, #059669);
-          border-radius: 22px;
+          border-radius: 20px;
           display: flex; align-items: center; justify-content: center;
-          font-size: 34px;
-          margin: 0 auto 28px;
+          font-size: 30px;
+          margin: 0 auto 24px;
           box-shadow: 0 16px 40px rgba(13,148,136,0.45);
         }
 
         .cl-title {
-          font-size: 28px;
+          font-size: 26px;
           font-weight: 800;
           color: #f1f5f9;
           letter-spacing: -0.6px;
-          margin-bottom: 8px;
+          margin-bottom: 4px;
+          text-align: center;
         }
 
         .cl-sub {
-          font-size: 14px;
+          font-size: 13px;
           color: rgba(255,255,255,0.38);
-          margin-bottom: 40px;
+          margin-bottom: 32px;
           line-height: 1.55;
+          text-align: center;
         }
 
         .cl-error {
@@ -139,17 +137,51 @@ export default function ClientLogin() {
           border-radius: 12px;
           font-size: 13px;
           color: #fca5a5;
-          margin-bottom: 24px;
+          margin-bottom: 20px;
+        }
+
+        .cl-field {
+          margin-bottom: 16px;
+        }
+
+        .cl-label {
+          display: block;
+          font-size: 12px;
+          font-weight: 600;
+          color: rgba(255,255,255,0.5);
+          margin-bottom: 7px;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        }
+
+        .cl-input {
+          width: 100%;
+          padding: 13px 16px;
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.09);
+          border-radius: 12px;
+          color: #f1f5f9;
+          font-size: 14px;
+          font-family: inherit;
+          outline: none;
+          box-sizing: border-box;
+          transition: border-color 0.15s, background 0.15s;
+        }
+        .cl-input::placeholder { color: rgba(255,255,255,0.22); }
+        .cl-input:focus {
+          border-color: rgba(13,148,136,0.6);
+          background: rgba(255,255,255,0.09);
         }
 
         .cl-btn {
           width: 100%;
-          padding: 18px;
+          padding: 15px;
+          margin-top: 8px;
           background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
           border: none;
           border-radius: 14px;
           color: #fff;
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 700;
           cursor: pointer;
           font-family: inherit;
@@ -175,9 +207,10 @@ export default function ClientLogin() {
         @keyframes cl-spin { to { transform: rotate(360deg); } }
 
         .cl-admin-link {
-          margin-top: 28px;
+          margin-top: 24px;
           font-size: 12px;
           color: rgba(255,255,255,0.2);
+          text-align: center;
         }
         .cl-admin-link a {
           color: rgba(255,255,255,0.32); text-decoration: none; transition: color .15s;
@@ -193,14 +226,42 @@ export default function ClientLogin() {
         <div className="cl-card">
           <div className="cl-icon">🔧</div>
           <div className="cl-title">Project-MT</div>
-          <div className="cl-sub">Field Portal · v2.0<br />Click to access your projects</div>
+          <div className="cl-sub">Field Portal · Sign in to continue</div>
 
           {error && <div className="cl-error">⚠ {error}</div>}
 
-          <button className="cl-btn" onClick={handleEnter} disabled={loading}>
-            {loading ? <span className="cl-spinner" /> : '→'}
-            {loading ? 'Entering…' : 'Enter Field Portal'}
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="cl-field">
+              <label className="cl-label">Email</label>
+              <input
+                className="cl-input"
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+                autoComplete="username"
+              />
+            </div>
+
+            <div className="cl-field">
+              <label className="cl-label">Password</label>
+              <input
+                className="cl-input"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+            </div>
+
+            <button className="cl-btn" type="submit" disabled={loading}>
+              {loading ? <span className="cl-spinner" /> : null}
+              {loading ? 'Signing in…' : 'Sign In'}
+            </button>
+          </form>
 
           <div className="cl-admin-link">
             Administrator? <a href="/admin/login">Go to Admin Portal →</a>
