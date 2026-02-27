@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update
+from sqlalchemy import select, update, delete
 from datetime import datetime, timezone, timedelta
 import uuid
 
@@ -162,3 +162,10 @@ async def delete_user(user_id: str, db: AsyncSession = Depends(get_db), _=Depend
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     await db.delete(user)
+
+
+@router.delete("/sessions", status_code=200)
+async def delete_all_sessions(db: AsyncSession = Depends(get_db), _=Depends(require_admin)):
+    """Revoke all active refresh tokens, forcing every user to log in again."""
+    result = await db.execute(delete(RefreshToken))
+    return {"message": "All login sessions deleted", "deleted": result.rowcount}
