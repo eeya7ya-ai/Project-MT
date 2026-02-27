@@ -44,10 +44,10 @@ export default function CreateProject() {
     try {
       if (isEdit) {
         await api.patch(`/projects/${id}`, payload)
-        navigate(`/projects/${id}`)
+        navigate(`/admin/projects/${id}`)
       } else {
         const { data } = await api.post('/projects', payload)
-        navigate(`/projects/${data.id}`)
+        navigate(`/admin/projects/${data.id}`)
       }
     } catch (err) {
       setError(err.response?.data?.detail || 'Save failed')
@@ -58,7 +58,7 @@ export default function CreateProject() {
 
   return (
     <div className="page">
-      <Link to={isEdit ? `/projects/${id}` : '/projects'} className="back-link">← Back</Link>
+      <Link to={isEdit ? `/admin/projects/${id}` : '/admin/projects'} className="back-link">← Back</Link>
       <h1 className="page-title">{isEdit ? 'Edit Project' : 'New Project'}</h1>
       {error && <div className="alert alert-error">{error}</div>}
       <div className="card">
@@ -99,7 +99,7 @@ export default function CreateProject() {
             <button className="btn btn-primary" disabled={loading}>
               {loading ? 'Saving…' : isEdit ? 'Save Changes' : 'Create Project'}
             </button>
-            <Link to={isEdit ? `/projects/${id}` : '/projects'} className="btn btn-secondary">Cancel</Link>
+            <Link to={isEdit ? `/admin/projects/${id}` : '/admin/projects'} className="btn btn-secondary">Cancel</Link>
           </div>
         </form>
       </div>

@@ -76,13 +76,13 @@ export default function ModuleDetail() {
 
   return (
     <div className="page">
-      <Link to={`/projects/${id}`} className="back-link">← Back to Project</Link>
+      <Link to={`/admin/projects/${id}`} className="back-link">← Back to Project</Link>
       <div className="page-header">
         <h1 className="page-title">
           {MODULE_ICONS[type]} {MODULE_TYPES[type]}
         </h1>
         {module && (
-          <Link to={`/projects/${id}/modules/${type}/import`} className="btn btn-secondary">
+          <Link to={`/admin/projects/${id}/modules/${type}/import`} className="btn btn-secondary">
             📊 Import from Excel
           </Link>
         )}

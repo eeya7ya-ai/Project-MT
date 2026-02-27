@@ -29,7 +29,7 @@ export default function Login() {
       localStorage.setItem('user_role', me.role)
       localStorage.setItem('user_name', me.full_name || me.email)
       localStorage.setItem('user_id', me.id)
-      navigate('/projects')
+      navigate('/admin/projects')
     } catch (err) {
       setError(err.response?.data?.detail || 'Invalid credentials. Please try again.')
     } finally {
