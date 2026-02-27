@@ -402,7 +402,9 @@ $$;
 
 -- ============================================================
 -- SEED: default admin user
--- password: Admin@1234  (bcrypt)
+-- Email:    admin@projectmt.com
+-- Password: Admin@1234
+-- Change these credentials immediately after first login.
 -- ============================================================
 
 INSERT INTO users (email, password_hash, full_name, role) VALUES

@@ -5,7 +5,7 @@ import { BASE_URL } from '../core/constants'
 
 export default function Login() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ username: '', password: '' })
+  const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -14,9 +14,9 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      const body = new URLSearchParams({ username: form.username, password: form.password })
-      const { data } = await axios.post(`${BASE_URL}/auth/login`, body, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      const { data } = await axios.post(`${BASE_URL}/auth/login`, {
+        email: form.email,
+        password: form.password,
       })
       localStorage.setItem('access_token', data.access_token)
       localStorage.setItem('refresh_token', data.refresh_token)
@@ -58,9 +58,10 @@ export default function Login() {
               className="form-input"
               type="email"
               placeholder="tech@projectmt.com"
-              value={form.username}
-              onChange={e => setForm(f => ({ ...f, username: e.target.value }))}
+              value={form.email}
+              onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
               required
+              autoComplete="email"
             />
           </div>
           <div className="form-group">
@@ -72,6 +73,7 @@ export default function Login() {
               value={form.password}
               onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
               required
+              autoComplete="current-password"
             />
           </div>
           <button className="btn btn-primary btn-full" disabled={loading}>
