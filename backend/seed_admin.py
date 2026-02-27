@@ -19,8 +19,8 @@ from app.core.security import hash_password
 from app.core.config import settings
 
 ADMIN_EMAIL    = os.getenv("ADMIN_EMAIL",    "admin@projectmt.com")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
-ADMIN_NAME     = os.getenv("ADMIN_NAME",     "Admin User")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Admin@1234")
+ADMIN_NAME     = os.getenv("ADMIN_NAME",     "System Administrator")
 
 
 async def seed():
