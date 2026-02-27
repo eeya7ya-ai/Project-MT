@@ -401,16 +401,9 @@ END;
 $$;
 
 -- ============================================================
--- SEED: default admin user
--- Email:    admin@projectmt.com
--- Password: Admin@1234
--- Change these credentials immediately after first login.
+-- NOTE: The default admin user is seeded automatically by the
+-- API service on startup (see backend/seed_admin.py).
+-- Default credentials:
+--   Email:    admin@projectmt.com
+--   Password: Admin@1234
 -- ============================================================
-
-INSERT INTO users (email, password_hash, full_name, role) VALUES
-(
-    'admin@projectmt.com',
-    '$2b$12$ON0pOxMK1Wd3HmMj5mSJU.AlG7jfQ2bggpBr7KZFdOyfTqOwWhRgS',
-    'System Administrator',
-    'admin'
-);

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-Seed the database with an initial admin user.
+Upsert the default admin user.
 Run from the /backend directory:
     python seed_admin.py
 Or with custom credentials:
     ADMIN_EMAIL=you@example.com ADMIN_PASSWORD=secret python seed_admin.py
+
+If the admin user already exists, the password and active status are updated.
 """
 import asyncio
 import os
@@ -30,7 +32,11 @@ async def seed():
         existing = result.scalar_one_or_none()
 
         if existing:
-            print(f"User already exists: {ADMIN_EMAIL}")
+            existing.password_hash = hash_password(ADMIN_PASSWORD)
+            existing.is_active = True
+            existing.role = "admin"
+            await session.commit()
+            print(f"Admin user updated: {ADMIN_EMAIL}")
         else:
             user = User(
                 email=ADMIN_EMAIL,
