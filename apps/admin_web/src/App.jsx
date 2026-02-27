@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 
 // ── Admin pages ──────────────────────────────────────────
+import AdminLogin from './pages/Login'
 import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
 import CreateProject from './pages/CreateProject'
@@ -9,6 +10,7 @@ import ExcelImport from './pages/ExcelImport'
 import Users from './pages/Users'
 
 // ── Client (technician) pages ────────────────────────────
+import ClientLogin from './pages/client/Login'
 import ClientProjects from './pages/client/Projects'
 import ClientProjectDetail from './pages/client/ProjectDetail'
 import ClientModuleChecklist from './pages/client/ModuleChecklist'
@@ -24,6 +26,7 @@ export default function App() {
     <Routes>
 
       {/* ══ CLIENT / TECHNICIAN ROUTES  →  / ══ */}
+      <Route path="/login" element={<ClientLogin />} />
       <Route element={<ClientShell />}>
         <Route path="/projects" element={<ClientProjects />} />
         <Route path="/projects/:id" element={<ClientProjectDetail />} />
@@ -33,6 +36,7 @@ export default function App() {
       </Route>
 
       {/* ══ ADMIN ROUTES  →  /admin/* ══ */}
+      <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin" element={<Navigate to="/admin/projects" replace />} />
       <Route element={<AdminPrivateRoute />}>
         <Route path="/admin/projects" element={<Projects />} />
@@ -45,8 +49,8 @@ export default function App() {
       </Route>
 
       {/* ══ FALLBACK ══ */}
-      <Route path="/" element={<Navigate to="/projects" replace />} />
-      <Route path="*" element={<Navigate to="/projects" replace />} />
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
 
     </Routes>
   )
