@@ -250,7 +250,7 @@ body {
   animation: eng-blink 2s ease-in-out infinite;
 }
 
-.main { flex: 1; overflow: auto; background: var(--bg); }
+.main { flex: 1; overflow: auto; background: #080c18; }
 .page { padding: 28px 32px; max-width: 1140px; }
 
 /* ═══════════════════════════════════════════════════════
@@ -981,15 +981,14 @@ tr:hover td { background: #fafbff; }
 .eng-page {
   position: relative;
   padding: 28px 32px;
-  min-height: 100%;
+  min-height: 100vh;
   background: #080c18;
   color: #cbd5e1;
-  overflow: hidden;
 }
 
 /* ── Animated grid background ── */
 .eng-bg-grid {
-  position: absolute;
+  position: fixed;
   inset: 0;
   background-image:
     linear-gradient(rgba(99,102,241,0.04) 1px, transparent 1px),

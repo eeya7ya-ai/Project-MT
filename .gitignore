@@ -44,6 +44,10 @@ android/app/src/main/GeneratedPluginRegistrant.java
 **/android/app/release
 **/android/key.properties
 
+# Node.js
+node_modules/
+apps/admin_web/dist/
+
 # Build outputs
 build/
 *.apk
