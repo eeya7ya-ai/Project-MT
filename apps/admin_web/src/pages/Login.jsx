@@ -3,21 +3,25 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { BASE_URL } from '../core/constants'
 
-const DEFAULT_EMAIL    = 'admin@projectmt.com'
-const DEFAULT_PASSWORD = 'Admin@1234'
-
 export default function Login() {
   const navigate = useNavigate()
+  const [email, setEmail]     = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
 
-  async function handleEnter() {
+  async function handleEnter(e) {
+    e.preventDefault()
+    if (!email || !password) {
+      setError('Please enter your email and password.')
+      return
+    }
     setError('')
     setLoading(true)
     try {
       const { data } = await axios.post(`${BASE_URL}/auth/login`, {
-        email: DEFAULT_EMAIL,
-        password: DEFAULT_PASSWORD,
+        email,
+        password,
       })
       localStorage.setItem('access_token',  data.access_token)
       localStorage.setItem('refresh_token', data.refresh_token)
@@ -131,6 +135,43 @@ export default function Login() {
           margin-bottom: 24px;
         }
 
+        .lp-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+          margin-bottom: 24px;
+          text-align: left;
+        }
+
+        .lp-label {
+          display: block;
+          font-size: 12px;
+          font-weight: 600;
+          color: rgba(255,255,255,0.45);
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+          margin-bottom: 6px;
+        }
+
+        .lp-input {
+          width: 100%;
+          padding: 13px 16px;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 12px;
+          color: #f1f5f9;
+          font-size: 15px;
+          font-family: inherit;
+          outline: none;
+          transition: border-color 0.18s, background 0.18s;
+          box-sizing: border-box;
+        }
+        .lp-input::placeholder { color: rgba(255,255,255,0.2); }
+        .lp-input:focus {
+          border-color: rgba(99,102,241,0.6);
+          background: rgba(255,255,255,0.08);
+        }
+
         .lp-btn {
           width: 100%;
           padding: 18px;
@@ -178,14 +219,45 @@ export default function Login() {
         <div className="lp-card">
           <div className="lp-icon">📋</div>
           <div className="lp-title">Project-MT</div>
-          <div className="lp-sub">Admin Portal · v2.0<br />Click to enter the dashboard</div>
+          <div className="lp-sub">Admin Portal · v2.0<br />Sign in to access the dashboard</div>
 
-          {error && <div className="lp-error">⚠ {error}</div>}
+          <form onSubmit={handleEnter} noValidate>
+            <div className="lp-fields">
+              <div>
+                <label className="lp-label" htmlFor="lp-email">Email</label>
+                <input
+                  id="lp-email"
+                  className="lp-input"
+                  type="email"
+                  placeholder="admin@projectmt.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  autoComplete="username"
+                  disabled={loading}
+                />
+              </div>
+              <div>
+                <label className="lp-label" htmlFor="lp-password">Password</label>
+                <input
+                  id="lp-password"
+                  className="lp-input"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  disabled={loading}
+                />
+              </div>
+            </div>
 
-          <button className="lp-btn" onClick={handleEnter} disabled={loading}>
-            {loading ? <span className="lp-spinner" /> : '→'}
-            {loading ? 'Entering…' : 'Enter Admin Portal'}
-          </button>
+            {error && <div className="lp-error">⚠ {error}</div>}
+
+            <button className="lp-btn" type="submit" disabled={loading}>
+              {loading ? <span className="lp-spinner" /> : '→'}
+              {loading ? 'Entering…' : 'Enter Admin Portal'}
+            </button>
+          </form>
 
           <div className="lp-footer">Project-MT · Secured with JWT</div>
         </div>
