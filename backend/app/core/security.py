@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from jose import JWTError, jwt
 import bcrypt
+import jwt
+from jwt import PyJWTError as JWTError
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +15,7 @@ bearer_scheme = HTTPBearer()
 
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
 
 def verify_password(plain: str, hashed: str) -> bool:
     return bcrypt.checkpw(plain.encode(), hashed.encode())
@@ -38,7 +40,7 @@ def create_refresh_token(data: dict) -> str:
 def decode_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        return payload
+        return dict(payload)
     except JWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

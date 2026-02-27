@@ -408,7 +408,7 @@ $$;
 INSERT INTO users (email, password_hash, full_name, role) VALUES
 (
     'admin@projectmt.com',
-    '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBpj2oGlFB1UBu',
+    '$2b$12$ON0pOxMK1Wd3HmMj5mSJU.AlG7jfQ2bggpBr7KZFdOyfTqOwWhRgS',
     'System Administrator',
     'admin'
 );
