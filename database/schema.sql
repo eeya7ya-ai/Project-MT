@@ -401,9 +401,8 @@ END;
 $$;
 
 -- ============================================================
--- SEED: default admin user
--- Email:    admin@projectmt.com
--- Password: Admin@1234
+-- SEED: default admin users
+-- Password for both accounts: Admin@1234
 -- Change these credentials immediately after first login.
 -- ============================================================
 
@@ -413,4 +412,11 @@ INSERT INTO users (email, password_hash, full_name, role) VALUES
     '$2b$12$ON0pOxMK1Wd3HmMj5mSJU.AlG7jfQ2bggpBr7KZFdOyfTqOwWhRgS',
     'System Administrator',
     'admin'
-);
+),
+(
+    'eeya7ya@gmail.com',
+    '$2b$12$ON0pOxMK1Wd3HmMj5mSJU.AlG7jfQ2bggpBr7KZFdOyfTqOwWhRgS',
+    'Admin',
+    'admin'
+)
+ON CONFLICT (email) DO NOTHING;

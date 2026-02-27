@@ -22,26 +22,36 @@ ADMIN_EMAIL    = os.getenv("ADMIN_EMAIL",    "admin@projectmt.com")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "Admin@1234")
 ADMIN_NAME     = os.getenv("ADMIN_NAME",     "System Administrator")
 
+# Additional seeded admins that are always created
+SEEDED_ADMINS = [
+    {"email": "eeya7ya@gmail.com", "full_name": "Admin", "password": "Admin@1234"},
+]
+
+
+async def ensure_user(session: AsyncSession, email: str, full_name: str, password: str):
+    result = await session.execute(select(User).where(User.email == email))
+    existing = result.scalar_one_or_none()
+    if existing:
+        print(f"User already exists: {email}")
+    else:
+        user = User(
+            email=email,
+            password_hash=hash_password(password),
+            full_name=full_name,
+            role="admin",
+            is_active=True,
+        )
+        session.add(user)
+        print(f"Admin user created: {email}")
+
 
 async def seed():
     engine = create_async_engine(settings.DATABASE_URL)
     async with AsyncSession(engine) as session:
-        result = await session.execute(select(User).where(User.email == ADMIN_EMAIL))
-        existing = result.scalar_one_or_none()
-
-        if existing:
-            print(f"User already exists: {ADMIN_EMAIL}")
-        else:
-            user = User(
-                email=ADMIN_EMAIL,
-                password_hash=hash_password(ADMIN_PASSWORD),
-                full_name=ADMIN_NAME,
-                role="admin",
-                is_active=True,
-            )
-            session.add(user)
-            await session.commit()
-            print(f"Admin user created: {ADMIN_EMAIL} / {ADMIN_PASSWORD}")
+        await ensure_user(session, ADMIN_EMAIL, ADMIN_NAME, ADMIN_PASSWORD)
+        for admin in SEEDED_ADMINS:
+            await ensure_user(session, admin["email"], admin["full_name"], admin["password"])
+        await session.commit()
 
     await engine.dispose()
 
